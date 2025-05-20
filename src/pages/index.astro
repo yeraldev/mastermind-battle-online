@@ -17,29 +17,220 @@ const players = [
 const avatarUrl = "https://avatar.iran.liara.run/public/";
 ---
 
-<Layout title="Mastermind Battle Online - Tablero Público">
-  <section class="hero">
-    <h1>Mastermind Battle Online</h1>
-    <p>El juego clásico de Mastermind ahora en línea con tablero privado</p>
-    <a href="/dashboard" class="btn-primary">Jugar ahora</a>
-  </section>
+<Layout title="Mastermind Battle Online - El Juego de Deducción Lógica">
+  <main>
+    <section class="hero">
+      <h1>Mastermind Battle Online</h1>
+      <p class="subtitle">El clásico juego de deducción lógica, reinventado para la era digital</p>
+      <a href="/dashboard" class="btn-primary">Jugar ahora</a>
+    </section>
+
+    <section class="about-game">
+      <h2>¿Qué es Mastermind?</h2>
+      <div class="game-description">
+        <p>
+          Mastermind es un juego de deducción lógica que desafía tu capacidad de pensamiento estratégico. 
+          Creado en 1970 por Mordecai Meirowitz, se ha convertido en uno de los juegos de mesa más populares 
+          del mundo, vendiendo más de 50 millones de copias.
+        </p>
+        <p>
+          En su versión original, los jugadores usaban clavijas de colores para crear y adivinar códigos. 
+          Hoy, hemos llevado esta experiencia clásica al mundo digital, manteniendo su esencia mientras 
+          agregamos características modernas que mejoran la experiencia de juego.
+        </p>
+      </div>
+    </section>
+
+    <section class="features">
+      <h2>¿Qué hace especial a nuestra versión?</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <h3>📱 Diseño Responsivo</h3>
+          <p>Juega en cualquier dispositivo, desde smartphones hasta computadoras de escritorio.</p>
+        </div>
+        <div class="feature-card">
+          <h3>🏆 Sistema de Clasificación</h3>
+          <p>Compite con jugadores de todo el mundo y muestra tus habilidades en nuestro tablero de clasificación.</p>
+        </div>
+        <div class="feature-card">
+          <h3>🎨 Interfaz Moderna</h3>
+          <p>Disfruta de una interfaz limpia y minimalista con soporte para modo oscuro/claro.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="leaderboard">
+      <h2>Tablero de Clasificación</h2>
+      <div class="players-grid">
+        {players.map((player, index) => (
+          <div class="player-card">
+            <img src={`${avatarUrl}${index + 1}`} alt={`Avatar de ${player.name}`} />
+            <div class="player-info">
+              <h3>{player.name}</h3>
+              <p>{player.wins} victorias</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  </main>
 </Layout>
+
 <style>
+  main {
+    display: grid;
+    gap: 4rem;
+    padding: 2rem;
+  }
+
   .hero {
     display: grid;
-    gap: 1rem;
+    gap: 1.5rem;
     justify-items: center;
     text-align: center;
+    padding: 4rem 1rem;
 
     h1 {
       color: var(--primary-color);
-      font-size: 3rem;
+      font-size: 3.5rem;
       text-wrap: balance;
     }
 
-    p {
+    .subtitle {
       color: var(--gray-600);
+      font-size: 1.5rem;
+      max-width: 600px;
+    }
+  }
+
+  .about-game {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+
+    h2 {
+      color: var(--primary-color);
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .game-description {
+      display: grid;
+      gap: 1.5rem;
       font-size: 1.25rem;
+      line-height: 1.6;
+      color: var(--gray-700);
+    }
+  }
+
+  .features {
+    h2 {
+      color: var(--primary-color);
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: var(--gray-100);
+      border-radius: 1rem;
+      padding: 2rem;
+      text-align: center;
+      transition: transform 0.2s;
+
+      &:hover {
+        transform: translateY(-5px);
+      }
+
+      h3 {
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+      }
+
+      p {
+        color: var(--gray-700);
+        line-height: 1.6;
+      }
+    }
+  }
+
+  .leaderboard {
+    h2 {
+      color: var(--primary-color);
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .players-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .player-card {
+      background: var(--gray-100);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1rem;
+      align-items: center;
+
+      img {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+      }
+
+      .player-info {
+        h3 {
+          color: var(--primary-color);
+          font-size: 1.25rem;
+          margin-bottom: 0.5rem;
+        }
+
+        p {
+          color: var(--gray-600);
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    main {
+      gap: 3rem;
+      padding: 1rem;
+    }
+
+    .hero {
+      padding: 2rem 1rem;
+
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        font-size: 1.25rem;
+      }
+    }
+
+    .about-game, .features, .leaderboard {
+      h2 {
+        font-size: 2rem;
+      }
     }
   }
 </style>
+
