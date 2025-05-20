@@ -6,8 +6,6 @@ export const GET: APIRoute = async ({ locals }) => {
   try {
     const { userId, getToken } = locals.auth();
 
-    console.log(userId);
-
     if (!userId) {
       return new Response(JSON.stringify({ error: "No autorizado" }), {
         status: 401,
@@ -25,7 +23,6 @@ export const GET: APIRoute = async ({ locals }) => {
         { status: 401 }
       );
     }
-    console.log(token);
 
     const apiResponse = await fetch(`${apiUrl}matches/${userId}`, {
       headers: {
