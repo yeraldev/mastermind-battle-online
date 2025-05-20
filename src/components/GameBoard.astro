@@ -1,0 +1,447 @@
+---
+const attempts: number[] = [1, 2, 3, 4];
+---
+
+<section>
+  <section>
+    <h2>Descifra el código secreto</h2>
+
+    <ul id="codes-list" class="code-list">
+      <li>
+        {
+          Array.from({ length: 4 }, (_, i) => (
+            <span class="secret" id={`secret-${i}`} />
+          ))
+        }
+        <span id="user-attempts">00/10</span>
+      </li>
+    </ul>
+
+    <form id="code-form">
+      {
+        Array.from({ length: 4 }, (_, i) => (
+          <label>
+            <input type="number" id={`control-${i}`} />
+          </label>
+        ))
+      }
+
+      <button type="submit" class="btn-primary" id="send-btn">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="14"
+          height="14"
+          viewBox="0 0 14 14"
+          ><path
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 8L.5 5.5l13-5l-5 13zm0 0l3-3"
+            stroke-width="1"></path></svg
+        >
+      </button>
+
+      <button type="button" class="btn-primary hidden" id="restart-btn">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          ><path
+            fill="currentColor"
+            fill-rule="evenodd"
+            d="M12.75 8a4.5 4.5 0 0 1-8.61 1.834l-1.391.565A6.001 6.001 0 0 0 14.25 8A6 6 0 0 0 3.5 4.334V2.5H2v4l.75.75h3.5v-1.5H4.352A4.5 4.5 0 0 1 12.75 8"
+            clip-rule="evenodd"></path></svg
+        >
+      </button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Historial de Juego</h2>
+
+    <div>
+      <div>
+        <span> Victorias </span>
+        <div>
+          <span id="win"></span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            ><path
+              fill="currentColor"
+              d="M5 9v12H1V9zm4 12a2 2 0 0 1-2-2V9c0-.55.22-1.05.59-1.41L14.17 1l1.06 1.06c.27.27.44.64.44 1.05l-.03.32L14.69 8H21a2 2 0 0 1 2 2v2c0 .26-.05.5-.14.73l-3.02 7.05C19.54 20.5 18.83 21 18 21zm0-2h9.03L21 12v-2h-8.79l1.13-5.32L9 9.03z"
+            ></path>
+          </svg>
+        </div>
+      </div>
+
+      <div id="loses">
+        <span> Derrotas </span>
+        <div>
+          <span id="lose"></span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            ><path
+              fill="currentColor"
+              d="M19 15V3h4v12zM15 3a2 2 0 0 1 2 2v10c0 .55-.22 1.05-.59 1.41L9.83 23l-1.06-1.06c-.27-.27-.44-.64-.44-1.06l.03-.31l.95-4.57H3a2 2 0 0 1-2-2v-2c0-.26.05-.5.14-.73l3.02-7.05C4.46 3.5 5.17 3 6 3zm0 2H5.97L3 12v2h8.78l-1.13 5.32L15 14.97z"
+            ></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+</section>
+
+<script>
+  let secretCode: string[] = [];
+  let attempts = 0;
+  const attemptsLimit = 10;
+  const $ = (selector: string) => document.querySelector(selector);
+  const invalidClass = "invalid";
+  const allowedKeys = ["ArrowLeft", "ArrowRight", "Backspace", "Enter", "Tap"];
+  const controlId = (i: number) => `#control-${i}`;
+  const list = $("#codes-list");
+  const form = $("#code-form");
+  const send = $("#send-btn");
+  const restart = $("#restart-btn");
+  const userAttempts = $("#user-attempts");
+  const controls = Array.from({ length: 4 }, (_, i) => $(controlId(i))).filter(
+    (e) => e instanceof HTMLInputElement
+  );
+
+  const createSecretCode = () => {
+    while (secretCode.length < 4) {
+      const digit = `${Math.trunc(Math.random() * 10)}`;
+      if (secretCode.includes(digit)) continue;
+      secretCode = [...secretCode, digit];
+    }
+  };
+  createSecretCode();
+
+  const updateHistory = (isWinner?: boolean) => {
+    let wins = +(localStorage.getItem("wins") ?? "0");
+    let loses = +(localStorage.getItem("loses") ?? "0");
+    if (isWinner !== undefined) {
+      isWinner ? wins++ : loses++;
+    }
+    localStorage.setItem("wins", wins.toString());
+    localStorage.setItem("loses", loses.toString());
+    const win = $(`#win`) as HTMLElement;
+    win.textContent = wins.toString();
+    const lose = $(`#lose`) as HTMLElement;
+    lose.textContent = loses.toString();
+  };
+  updateHistory();
+
+  const updateSecretCodeFields = () => {
+    controls.forEach(({ value }, i) => {
+      const secret = $(`#secret-${i}`);
+      if (!secret) return;
+      secret.textContent = value;
+    });
+  };
+
+  const updateUserAttempts = () => {
+    if (!userAttempts) return;
+    userAttempts.textContent = `${attempts < 10 ? "0" : ""}${attempts}/10`;
+  };
+
+  restart?.addEventListener("click", () => {
+    controls.forEach((control) => control.removeAttribute("disabled"));
+    attempts = 0;
+    createSecretCode();
+    updateUserAttempts();
+    updateSecretCodeFields();
+    const oldAttempts = document.querySelectorAll(".attempt");
+    oldAttempts.forEach((attempt) => attempt.remove());
+    send?.classList.toggle("hidden");
+    restart?.classList.toggle("hidden");
+    controls[0].focus();
+  });
+
+  const focusNext = (i: number) => controls.at(i + 1)?.focus();
+  const focusPrev = (i: number) => controls.at(i - 1)?.focus();
+  controls.forEach((control, i) => {
+    control.addEventListener("keydown", (e) => {
+      if (+e.key >= 0) control.value = "";
+    });
+
+    control?.addEventListener("keyup", (e) => {
+      if (!(e instanceof KeyboardEvent)) return;
+      if (isNaN(+e.key) && !allowedKeys.includes(e.key)) {
+        e.preventDefault();
+        return;
+      }
+      if (e.key === allowedKeys[2] && !control.value && i) {
+        focusPrev(i);
+        return;
+      }
+      if (e.key === allowedKeys[0] && i) {
+        focusPrev(i);
+        return;
+      }
+      if (e.key === allowedKeys[1] && i < controls.length) {
+        focusNext(i);
+        return;
+      }
+      if (+e.key >= 0) {
+        control.value = e.key;
+        focusNext(i);
+      }
+      if (control.classList.contains(invalidClass)) {
+        control.classList.remove(invalidClass);
+      }
+    });
+  });
+
+  if (form instanceof HTMLFormElement)
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      let isInvalid = false;
+
+      const values = controls.map((control, i) => {
+        if (control.classList.contains(invalidClass)) {
+          control.classList.remove(invalidClass);
+        }
+        const digit = control.value;
+        const isRepeated = controls
+          .filter((_, j) => i !== j)
+          .map(({ value }) => value)
+          .includes(digit);
+        if (!digit || isRepeated) {
+          isInvalid = true;
+          control.classList.add("invalid");
+        }
+        const status = !secretCode.includes(digit)
+          ? 0
+          : secretCode.at(i) === digit
+            ? 1
+            : 2;
+        return { digit, status };
+      });
+
+      if (isInvalid || !(list instanceof HTMLUListElement)) return;
+      attempts++;
+
+      const li = document.createElement("li");
+      li.classList.add("attempt");
+      values.forEach((value) => {
+        const digit = document.createElement("span");
+        digit.classList.add("digit");
+        digit.textContent = value.digit;
+        li.appendChild(digit);
+      });
+
+      const summary = document.createElement("span");
+      summary.classList.add("digit");
+      summary.classList.add("summary");
+      const statusItems = values
+        .sort((a, b) => a.status - b.status)
+        .filter((value) => value.status)
+        .map((value) => {
+          const status = document.createElement("span");
+          const statusClass = value.status === 1 ? "dead" : "wounded";
+          status.classList.add(statusClass);
+          return status;
+        });
+      statusItems.forEach((value) => summary.appendChild(value));
+
+      li.appendChild(summary);
+      list.appendChild(li);
+      const isWinner = values.every((value) => value.status === 1);
+      if (isWinner) updateSecretCodeFields();
+      if (isWinner || attempts === attemptsLimit) {
+        controls.forEach((control) => control.setAttribute("disabled", "true"));
+        send?.classList.toggle("hidden");
+        restart?.classList.toggle("hidden");
+        updateHistory(isWinner);
+      }
+      updateUserAttempts();
+      form.reset();
+      controls[0].focus();
+    });
+</script>
+
+<style>
+  section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+
+    section {
+      border-radius: 1rem;
+      box-shadow: var(--card-shadow);
+      display: grid;
+      grid-template-columns: 20rem;
+      justify-content: center;
+      justify-items: center;
+      margin: 0.75rem;
+      padding: 0.75rem;
+      width: 23rem;
+    }
+  }
+
+  .code-list {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5rem;
+    font-weight: bold;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    li {
+      display: inline-flex;
+      gap: 0.5rem;
+
+      span {
+        align-items: center;
+        aspect-ratio: 1 / 1;
+        background-color: var(--gray-200);
+        border-radius: 0.5rem;
+        border: 1px solid var(--primary-color);
+        display: inline-flex;
+        justify-content: center;
+        text-align: center;
+        width: 3.5rem;
+      }
+
+      .secret {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%23f9fafb' d='M202.021 0C122.202 0 70.503 32.703 29.914 91.026c-7.363 10.58-5.093 25.086 5.178 32.874l43.138 32.709c10.373 7.865 25.132 6.026 33.253-4.148c25.049-31.381 43.63-49.449 82.757-49.449c30.764 0 68.816 19.799 68.816 49.631c0 22.552-18.617 34.134-48.993 51.164c-35.423 19.86-82.299 44.576-82.299 106.405V320c0 13.255 10.745 24 24 24h72.471c13.255 0 24-10.745 24-24v-5.773c0-42.86 125.268-44.645 125.268-160.627C377.504 66.256 286.902 0 202.021 0M192 373.459c-38.196 0-69.271 31.075-69.271 69.271S153.804 512 192 512s69.271-31.075 69.271-69.271s-31.075-69.27-69.271-69.27'/%3E%3C/svg%3E");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 1.75rem;
+        color: var(--primary-color);
+        font-size: 2.25rem;
+      }
+
+      #user-attempts {
+        font-size: 1.25rem;
+        font-weight: normal;
+      }
+
+      .summary {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 0.25rem;
+        padding: 0.25rem;
+        place-items: center;
+      }
+
+      .dead,
+      .wounded {
+        width: 0.75rem;
+        display: inline-block;
+        border-radius: 50%;
+        border: 2px solid var(--danger-color);
+      }
+
+      .dead {
+        background-color: var(--danger-color);
+      }
+    }
+  }
+
+  form {
+    display: flex;
+    font-size: 2rem;
+    font-weight: bold;
+    gap: 0.5rem;
+
+    label {
+      all: unset;
+    }
+
+    input[type="number"] {
+      aspect-ratio: 1 / 1;
+      border-radius: 0.5rem;
+      border: 1px solid var(--primary-color);
+      display: grid;
+      font-size: 1.5rem;
+      font-weight: bold;
+      outline: none;
+      text-align: center;
+      width: 3.5rem;
+
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+        -moz-appearance: textfield;
+      }
+
+      &.invalid {
+        border-color: var(--danger-color);
+        box-shadow: 0 0 2px 1px var(--danger-color);
+      }
+    }
+
+    button {
+      aspect-ratio: 1 / 1;
+      border-radius: 0.5rem;
+      display: grid;
+      place-items: center;
+      width: 3.5rem;
+
+      svg {
+        fill: currentColor;
+        scale: 2;
+      }
+
+      &.hidden {
+        display: none;
+      }
+    }
+  }
+
+  h2 {
+    color: var(--primary-color);
+    padding-block: 0.5rem;
+  }
+
+  div {
+    display: grid;
+    font-size: 1.25rem;
+    font-weight: bold;
+    grid-template-columns: 1fr 1fr;
+    place-items: center;
+    text-align: center;
+    width: 100%;
+
+    :has(#win) {
+      color: hsl(110, 59%, 60%);
+    }
+
+    :has(#lose) {
+      color: var(--danger-color);
+    }
+
+    div {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      div {
+        align-items: center;
+        flex-direction: row;
+        font-size: 3rem;
+        gap: 1rem;
+        justify-content: center;
+
+        svg {
+          scale: 2;
+        }
+      }
+    }
+  }
+
+
+</style>

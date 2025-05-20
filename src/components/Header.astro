@@ -1,0 +1,37 @@
+---
+import {
+  SignedOut,
+  SignInButton,
+  SignedIn,
+  UserButton,
+} from "@clerk/astro/components";
+
+interface Props {
+  title?: string;
+}
+
+const { title = "Mastermind Battle Online" } = Astro.props;
+---
+
+<header>
+  <nav>
+    <a href="/">{title}</a>
+
+    <SignedOut>
+      <SignInButton mode="modal" class="btn-primary">
+        Iniciar Sesión
+      </SignInButton>
+    </SignedOut>
+    <SignedIn>
+      <UserButton />
+    </SignedIn>
+  </nav>
+</header>
+
+<style>
+  nav {
+    display: flex;
+    justify-content: space-between;
+    padding-block: 1rem;
+  }
+</style>

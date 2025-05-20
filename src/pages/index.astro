@@ -1,16 +1,45 @@
 ---
+import Layout from "../layouts/Layout.astro";
 
+const players = [
+  { name: "Mastermind Pro", wins: 125 },
+  { name: "Code Breaker", wins: 112 },
+  { name: "Color Master", wins: 98 },
+  { name: "Pattern Seeker", wins: 85 },
+  { name: "Code Cracker", wins: 78 },
+  { name: "Color Wizard", wins: 69 },
+  { name: "Pattern Master", wins: 62 },
+  { name: "Code Genius", wins: 55 },
+  { name: "Color Champ", wins: 48 },
+  { name: "Pattern Expert", wins: 42 },
+];
+
+const avatarUrl = "https://avatar.iran.liara.run/public/";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="Mastermind Battle Online - Tablero Público">
+  <section class="hero">
+    <h1>Mastermind Battle Online</h1>
+    <p>El juego clásico de Mastermind ahora en línea con tablero privado</p>
+    <a href="/dashboard" class="btn-primary">Jugar ahora</a>
+  </section>
+</Layout>
+<style>
+  .hero {
+    display: grid;
+    gap: 1rem;
+    justify-items: center;
+    text-align: center;
+
+    h1 {
+      color: var(--primary-color);
+      font-size: 3rem;
+      text-wrap: balance;
+    }
+
+    p {
+      color: var(--gray-600);
+      font-size: 1.25rem;
+    }
+  }
+</style>
