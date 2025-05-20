@@ -22,7 +22,7 @@ Al participar en este proyecto, aceptas mantener un ambiente respetuoso y profes
 
 3. Clona tu fork localmente:
    ```bash
-   git clone https://github.com/tu-usuario/mastermind-battle-online.git
+   git clone https://github.com/yeraldev/mastermind-battle-online.git
    cd mastermind-battle-online
    ```
 

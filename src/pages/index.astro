@@ -21,7 +21,9 @@ const avatarUrl = "https://avatar.iran.liara.run/public/";
   <main>
     <section class="hero">
       <h1>Mastermind Battle Online</h1>
-      <p class="subtitle">El clásico juego de deducción lógica, reinventado para la era digital</p>
+      <p class="subtitle">
+        El clásico juego de deducción lógica, reinventado para la era digital
+      </p>
       <a href="/dashboard" class="btn-primary">Jugar ahora</a>
     </section>
 
@@ -29,14 +31,16 @@ const avatarUrl = "https://avatar.iran.liara.run/public/";
       <h2>¿Qué es Mastermind?</h2>
       <div class="game-description">
         <p>
-          Mastermind es un juego de deducción lógica que desafía tu capacidad de pensamiento estratégico. 
-          Creado en 1970 por Mordecai Meirowitz, se ha convertido en uno de los juegos de mesa más populares 
-          del mundo, vendiendo más de 50 millones de copias.
+          Mastermind es un juego de deducción lógica que desafía tu capacidad de
+          pensamiento estratégico. Creado en 1970 por Mordecai Meirowitz, se ha
+          convertido en uno de los juegos de mesa más populares del mundo,
+          vendiendo más de 50 millones de copias.
         </p>
         <p>
-          En su versión original, los jugadores usaban clavijas de colores para crear y adivinar códigos. 
-          Hoy, hemos llevado esta experiencia clásica al mundo digital, manteniendo su esencia mientras 
-          agregamos características modernas que mejoran la experiencia de juego.
+          En su versión original, los jugadores usaban clavijas de colores para
+          crear y adivinar códigos. Hoy, hemos llevado esta experiencia clásica
+          al mundo digital, manteniendo su esencia mientras agregamos
+          características modernas que mejoran la experiencia de juego.
         </p>
       </div>
     </section>
@@ -46,15 +50,24 @@ const avatarUrl = "https://avatar.iran.liara.run/public/";
       <div class="features-grid">
         <div class="feature-card">
           <h3>📱 Diseño Responsivo</h3>
-          <p>Juega en cualquier dispositivo, desde smartphones hasta computadoras de escritorio.</p>
+          <p>
+            Juega en cualquier dispositivo, desde smartphones hasta computadoras
+            de escritorio.
+          </p>
         </div>
         <div class="feature-card">
           <h3>🏆 Sistema de Clasificación</h3>
-          <p>Compite con jugadores de todo el mundo y muestra tus habilidades en nuestro tablero de clasificación.</p>
+          <p>
+            Compite con jugadores de todo el mundo y muestra tus habilidades en
+            nuestro tablero de clasificación.
+          </p>
         </div>
         <div class="feature-card">
           <h3>🎨 Interfaz Moderna</h3>
-          <p>Disfruta de una interfaz limpia y minimalista con soporte para modo oscuro/claro.</p>
+          <p>
+            Disfruta de una interfaz limpia y minimalista con soporte para modo
+            oscuro/claro.
+          </p>
         </div>
       </div>
     </section>
@@ -62,15 +75,20 @@ const avatarUrl = "https://avatar.iran.liara.run/public/";
     <section class="leaderboard">
       <h2>Tablero de Clasificación</h2>
       <div class="players-grid">
-        {players.map((player, index) => (
-          <div class="player-card">
-            <img src={`${avatarUrl}${index + 1}`} alt={`Avatar de ${player.name}`} />
-            <div class="player-info">
-              <h3>{player.name}</h3>
-              <p>{player.wins} victorias</p>
+        {
+          players.map((player, index) => (
+            <div class="player-card">
+              <img
+                src={`${avatarUrl}${index + 1}`}
+                alt={`Avatar de ${player.name}`}
+              />
+              <div class="player-info">
+                <h3>{player.name}</h3>
+                <p>{player.wins} victorias</p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        }
       </div>
     </section>
   </main>
@@ -135,7 +153,6 @@ const avatarUrl = "https://avatar.iran.liara.run/public/";
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 2rem;
-      max-width: 1200px;
       margin: 0 auto;
     }
 
@@ -175,7 +192,7 @@ const avatarUrl = "https://avatar.iran.liara.run/public/";
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 2rem;
-      max-width: 1200px;
+      
       margin: 0 auto;
     }
 
@@ -207,8 +224,6 @@ const avatarUrl = "https://avatar.iran.liara.run/public/";
       }
     }
   }
-
-  @media (max-width: 768px) {
     main {
       gap: 3rem;
       padding: 1rem;
@@ -231,6 +246,5 @@ const avatarUrl = "https://avatar.iran.liara.run/public/";
         font-size: 2rem;
       }
     }
-  }
+  } */
 </style>
-

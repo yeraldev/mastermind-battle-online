@@ -1,4 +1,3 @@
-
 <section>
   <section>
     <h2>Descifra el código secreto</h2>
@@ -97,6 +96,22 @@
 </section>
 
 <script>
+  async function getUserStats() {
+    try {
+      const response = await fetch("/api/stats");
+      if (!response.ok) {
+        throw new Error("Error al obtener estadísticas");
+      }
+      const stats = await response.json();
+      return stats;
+    } catch (error) {
+      console.error("Error:", error);
+      throw error;
+    }
+  }
+
+  getUserStats()
+
   let secretCode: string[] = [];
   let attempts = 0;
   const attemptsLimit = 10;
@@ -112,6 +127,7 @@
   const controls = Array.from({ length: 4 }, (_, i) => $(controlId(i))).filter(
     (e) => e instanceof HTMLInputElement
   );
+
 
   const createSecretCode = () => {
     while (secretCode.length < 4) {
@@ -440,7 +456,6 @@
     }
   }
 
-  .history{
-    
+  .history {
   }
 </style>
