@@ -74,10 +74,10 @@ const avatarUrl = "https://avatar.iran.liara.run/public/";
 
     <section class="leaderboard">
       <h2>Tablero de Clasificación</h2>
-      <div class="players-grid">
+      <section class="players-grid">
         {
           players.map((player, index) => (
-            <div class="player-card">
+            <article class="player-card">
               <img
                 src={`${avatarUrl}${index + 1}`}
                 alt={`Avatar de ${player.name}`}
@@ -86,13 +86,49 @@ const avatarUrl = "https://avatar.iran.liara.run/public/";
                 <h3>{player.name}</h3>
                 <p>{player.wins} victorias</p>
               </div>
-            </div>
+            </article>
           ))
         }
-      </div>
+      </section>
     </section>
   </main>
 </Layout>
+
+<script>
+  interface LeaderboardEntry {
+    idUser: string;
+    name: string;
+    total_wins: string;
+    score: string;
+  }
+  let data: LeaderboardEntry[] = [];
+  const avatarUrl = "https://avatar.iran.liara.run/public/";
+  try {
+    const response = await fetch("/api/leaderboard");
+    data = await response.json();
+  } catch (error) {
+    console.error(error);
+  }
+  const playersGrid = document.getElementsByClassName("players-grid")[0];
+  data.map((player, i) => {
+    const card = document.createElement("article");
+    card.classList.add("player-card");
+    const img = document.createElement("img");
+    img.src = `${avatarUrl}${i + 1}`;
+    img.alt = `Avatar de ${player.name}`;
+    card.appendChild(img);
+    const playerInfo = document.createElement("div");
+    playerInfo.classList.add("player-info");
+    const h3 = document.createElement("h3");
+    h3.textContent = player.name;
+    playerInfo.appendChild(h3);
+    const p = document.createElement("p");
+    p.textContent = `${player.total_wins} victorias`;
+    playerInfo.appendChild(p);
+    card.appendChild(playerInfo);
+    playersGrid.appendChild(card);
+  });
+</script>
 
 <style>
   main {
@@ -118,6 +154,10 @@ const avatarUrl = "https://avatar.iran.liara.run/public/";
       color: var(--gray-600);
       font-size: 1.5rem;
       max-width: 600px;
+    }
+
+    a {
+      text-decoration: none;
     }
   }
 
@@ -192,7 +232,7 @@ const avatarUrl = "https://avatar.iran.liara.run/public/";
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 2rem;
-      
+
       margin: 0 auto;
     }
 
@@ -224,27 +264,4 @@ const avatarUrl = "https://avatar.iran.liara.run/public/";
       }
     }
   }
-    main {
-      gap: 3rem;
-      padding: 1rem;
-    }
-
-    .hero {
-      padding: 2rem 1rem;
-
-      h1 {
-        font-size: 2.5rem;
-      }
-
-      .subtitle {
-        font-size: 1.25rem;
-      }
-    }
-
-    .about-game, .features, .leaderboard {
-      h2 {
-        font-size: 2rem;
-      }
-    }
-  } */
 </style>

@@ -96,21 +96,32 @@
 </section>
 
 <script>
-  async function getUserStats() {
+  const getUserStats = async () => {
+    let stats: Partial<{
+      name: string;
+      total_wins: string;
+      total_looses: string;
+      lowest_score: string;
+    }> = {};
     try {
       const response = await fetch("/api/stats");
       if (!response.ok) {
         throw new Error("Error al obtener estadísticas");
       }
-      const stats = await response.json();
-      return stats;
+      stats = await response.json();
+      console.log(stats);
+      
     } catch (error) {
       console.error("Error:", error);
       throw error;
+    } finally {
+      const win = $(`#win`) as HTMLElement;
+      win.textContent = stats.total_wins ?? "0";
+      const lose = $(`#lose`) as HTMLElement;
+      lose.textContent = stats.total_looses ?? "0";
     }
-  }
-
-  getUserStats()
+  };
+  (async () => await getUserStats())();
 
   let secretCode: string[] = [];
   let attempts = 0;
@@ -128,7 +139,6 @@
     (e) => e instanceof HTMLInputElement
   );
 
-
   const createSecretCode = () => {
     while (secretCode.length < 4) {
       const digit = `${Math.trunc(Math.random() * 10)}`;
@@ -138,20 +148,20 @@
   };
   createSecretCode();
 
-  const updateHistory = (isWinner?: boolean) => {
-    let wins = +(localStorage.getItem("wins") ?? "0");
-    let loses = +(localStorage.getItem("loses") ?? "0");
-    if (isWinner !== undefined) {
-      isWinner ? wins++ : loses++;
-    }
-    localStorage.setItem("wins", wins.toString());
-    localStorage.setItem("loses", loses.toString());
-    const win = $(`#win`) as HTMLElement;
-    win.textContent = wins.toString();
-    const lose = $(`#lose`) as HTMLElement;
-    lose.textContent = loses.toString();
-  };
-  updateHistory();
+  // const updateHistory = (isWinner?: boolean) => {
+  //   let wins = +(localStorage.getItem("wins") ?? "0");
+  //   let loses = +(localStorage.getItem("loses") ?? "0");
+  //   if (isWinner !== undefined) {
+  //     isWinner ? wins++ : loses++;
+  //   }
+  //   localStorage.setItem("wins", wins.toString());
+  //   localStorage.setItem("loses", loses.toString());
+  //   const win = $(`#win`) as HTMLElement;
+  //   win.textContent = wins.toString();
+  //   const lose = $(`#lose`) as HTMLElement;
+  //   lose.textContent = loses.toString();
+  // };
+  // updateHistory();
 
   const updateSecretCodeFields = () => {
     controls.forEach(({ value }, i) => {
@@ -215,7 +225,7 @@
   });
 
   if (form instanceof HTMLFormElement)
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       let isInvalid = false;
 
@@ -274,7 +284,22 @@
         controls.forEach((control) => control.setAttribute("disabled", "true"));
         send?.classList.toggle("hidden");
         restart?.classList.toggle("hidden");
-        updateHistory(isWinner);
+        // updateHistory(isWinner);
+
+        try {
+          const response = await fetch("/api/stats", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ isWinner, score: attempts }),
+          });
+          if (!response.ok) {
+            throw new Error("Error al guardar estadísticas");
+          }
+          await getUserStats();
+        } catch (error) {
+          console.error("Error:", error);
+          throw error;
+        }
       }
       updateUserAttempts();
       form.reset();
@@ -454,8 +479,5 @@
         }
       }
     }
-  }
-
-  .history {
   }
 </style>
