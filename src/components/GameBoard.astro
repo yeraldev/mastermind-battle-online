@@ -155,11 +155,12 @@
   };
   createSecretCode();
 
-  const updateSecretCodeFields = () => {
-    controls.forEach(({ value }, i) => {
+  const updateSecretCodeFields = (reset = false) => {
+    secretCode.forEach((value, i) => {
       const secret = $(`#secret-${i}`);
       if (!secret) return;
-      secret.textContent = value;
+      secret.textContent = reset ? "" : value;
+      secret.classList.toggle("show-secret");
     });
   };
 
@@ -173,7 +174,7 @@
     attempts = 0;
     createSecretCode();
     updateUserAttempts();
-    updateSecretCodeFields();
+    updateSecretCodeFields(true);
     const oldAttempts = document.querySelectorAll(".attempt");
     oldAttempts.forEach((attempt) => attempt.remove());
     send?.classList.toggle("hidden");
@@ -350,6 +351,10 @@
         background-size: 1.75rem;
         color: var(--primary-color);
         font-size: 2.25rem;
+      }
+
+      .show-secret {
+        background-image: none;
       }
 
       #user-attempts {
