@@ -54,45 +54,52 @@
     </form>
   </section>
 
-  <section class="history">
-    <h2>Historial de Juego</h2>
+  <div>
+    <section>
+      <h2>Mejor puntaje</h2>
+      <span id="score"></span>
+    </section>
 
-    <div>
-      <div>
-        <span> Victorias </span>
+    <section>
+      <h2>Historial de Juego</h2>
+
+      <div class="history-card">
         <div>
-          <span id="win"></span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            ><path
-              fill="currentColor"
-              d="M5 9v12H1V9zm4 12a2 2 0 0 1-2-2V9c0-.55.22-1.05.59-1.41L14.17 1l1.06 1.06c.27.27.44.64.44 1.05l-.03.32L14.69 8H21a2 2 0 0 1 2 2v2c0 .26-.05.5-.14.73l-3.02 7.05C19.54 20.5 18.83 21 18 21zm0-2h9.03L21 12v-2h-8.79l1.13-5.32L9 9.03z"
-            ></path>
-          </svg>
+          <span> Victorias </span>
+          <div>
+            <span id="win"></span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              ><path
+                fill="currentColor"
+                d="M5 9v12H1V9zm4 12a2 2 0 0 1-2-2V9c0-.55.22-1.05.59-1.41L14.17 1l1.06 1.06c.27.27.44.64.44 1.05l-.03.32L14.69 8H21a2 2 0 0 1 2 2v2c0 .26-.05.5-.14.73l-3.02 7.05C19.54 20.5 18.83 21 18 21zm0-2h9.03L21 12v-2h-8.79l1.13-5.32L9 9.03z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="loses">
+          <span> Derrotas </span>
+          <div>
+            <span id="lose"></span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              ><path
+                fill="currentColor"
+                d="M19 15V3h4v12zM15 3a2 2 0 0 1 2 2v10c0 .55-.22 1.05-.59 1.41L9.83 23l-1.06-1.06c-.27-.27-.44-.64-.44-1.06l.03-.31l.95-4.57H3a2 2 0 0 1-2-2v-2c0-.26.05-.5.14-.73l3.02-7.05C4.46 3.5 5.17 3 6 3zm0 2H5.97L3 12v2h8.78l-1.13 5.32L15 14.97z"
+              ></path>
+            </svg>
+          </div>
         </div>
       </div>
-
-      <div id="loses">
-        <span> Derrotas </span>
-        <div>
-          <span id="lose"></span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            ><path
-              fill="currentColor"
-              d="M19 15V3h4v12zM15 3a2 2 0 0 1 2 2v10c0 .55-.22 1.05-.59 1.41L9.83 23l-1.06-1.06c-.27-.27-.44-.64-.44-1.06l.03-.31l.95-4.57H3a2 2 0 0 1-2-2v-2c0-.26.05-.5.14-.73l3.02-7.05C4.46 3.5 5.17 3 6 3zm0 2H5.97L3 12v2h8.78l-1.13 5.32L15 14.97z"
-            ></path>
-          </svg>
-        </div>
-      </div>
-    </div>
-  </section>
+    </section>
+  </div>
 </section>
 
 <script>
@@ -100,25 +107,25 @@
     let stats: Partial<{
       name: string;
       total_wins: string;
-      total_looses: string;
+      total_loose: string;
       lowest_score: string;
-    }> = {};
+    }>[] = [];
     try {
       const response = await fetch("/api/stats");
       if (!response.ok) {
         throw new Error("Error al obtener estadísticas");
       }
       stats = await response.json();
-      console.log(stats);
-      
     } catch (error) {
       console.error("Error:", error);
       throw error;
     } finally {
       const win = $(`#win`) as HTMLElement;
-      win.textContent = stats.total_wins ?? "0";
+      win.textContent = stats[0].total_wins ?? "0";
       const lose = $(`#lose`) as HTMLElement;
-      lose.textContent = stats.total_looses ?? "0";
+      lose.textContent = stats[0].total_loose ?? "0";
+      const score = $(`#score`) as HTMLElement;
+      score.textContent = stats[0].lowest_score ?? "0";
     }
   };
   (async () => await getUserStats())();
@@ -147,21 +154,6 @@
     }
   };
   createSecretCode();
-
-  // const updateHistory = (isWinner?: boolean) => {
-  //   let wins = +(localStorage.getItem("wins") ?? "0");
-  //   let loses = +(localStorage.getItem("loses") ?? "0");
-  //   if (isWinner !== undefined) {
-  //     isWinner ? wins++ : loses++;
-  //   }
-  //   localStorage.setItem("wins", wins.toString());
-  //   localStorage.setItem("loses", loses.toString());
-  //   const win = $(`#win`) as HTMLElement;
-  //   win.textContent = wins.toString();
-  //   const lose = $(`#lose`) as HTMLElement;
-  //   lose.textContent = loses.toString();
-  // };
-  // updateHistory();
 
   const updateSecretCodeFields = () => {
     controls.forEach(({ value }, i) => {
@@ -279,12 +271,11 @@
       li.appendChild(summary);
       list.appendChild(li);
       const isWinner = values.every((value) => value.status === 1);
-      if (isWinner) updateSecretCodeFields();
       if (isWinner || attempts === attemptsLimit) {
         controls.forEach((control) => control.setAttribute("disabled", "true"));
         send?.classList.toggle("hidden");
         restart?.classList.toggle("hidden");
-        // updateHistory(isWinner);
+        updateSecretCodeFields();
 
         try {
           const response = await fetch("/api/stats", {
@@ -319,6 +310,7 @@
       box-shadow: var(--card-shadow);
       display: grid;
       grid-template-columns: 20rem;
+      height: fit-content;
       justify-content: center;
       justify-items: center;
       margin: 0.75rem;
@@ -445,7 +437,7 @@
     padding-block: 0.5rem;
   }
 
-  div {
+  .history-card {
     display: grid;
     font-size: 1.25rem;
     font-weight: bold;
@@ -479,5 +471,11 @@
         }
       }
     }
+  }
+
+  #score {
+    font-size: 4rem;
+    font-weight: bold;
+    color: var(--secondary-color);
   }
 </style>
